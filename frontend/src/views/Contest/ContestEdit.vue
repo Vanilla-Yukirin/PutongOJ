@@ -15,6 +15,7 @@ import Select from 'primevue/select'
 import { computed, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { getConfig, updateConfig } from '@/api/contest'
+import ContestCloneDialog from '@/components/ContestCloneDialog.vue'
 import LabeledSwitch from '@/components/LabeledSwitch.vue'
 import { useContestStore } from '@/store/modules/contest'
 import { useProblemStore } from '@/store/modules/problem'
@@ -41,6 +42,8 @@ const problems = ref<ContestConfigQueryResult['problems']>([])
 const problemToAdd = ref<number | null>(null)
 const enablePassword = ref(false)
 const languageRestrictionEnabled = ref(false)
+
+const cloneDialogVisible = ref(false)
 
 const loading = ref(false)
 const savingBasicInfo = ref(false)
@@ -485,10 +488,21 @@ onMounted(() => {
         />
       </div>
     </div>
+
+    <div class="border-t border-surface gap-x-4 gap-y-6 grid grid-cols-1 md:grid-cols-2 p-6">
+      <div class="flex gap-3 justify-end md:col-span-2">
+        <Button
+          :label="t('ptoj.clone_contest')" icon="pi pi-copy" severity="secondary"
+          @click="cloneDialogVisible = true"
+        />
+      </div>
+    </div>
   </div>
 
   <div v-else class="flex h-64 items-center justify-center max-w-5xl text-muted-color">
     <i class="mr-2 pi pi-spin pi-spinner" />
     <span>{{ loading ? t('ptoj.loading') : t('ptoj.unknown_error_occurred') }}</span>
   </div>
+
+  <ContestCloneDialog v-model:visible="cloneDialogVisible" :contest-id="contestId" />
 </template>
